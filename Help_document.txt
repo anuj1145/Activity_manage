@@ -1,0 +1,2 @@
+1. Firstly setup database available in root diectory folder name DB
+2. Now run project as: http://localhost/ActivityManage/public
