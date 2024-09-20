@@ -57,7 +57,9 @@ class AuthController extends Controller
     // Logout user (Invalidate the token)
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete(); // Revoke all tokens
-        return response()->json(['message' => 'Logged out successfully']);
+       Auth::logout();
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ]);
     }
 }
