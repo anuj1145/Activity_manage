@@ -74,57 +74,42 @@
    
 
     <script>
- $(document).ready(function() {
-    $('#loginForm').on('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
+  $(document).ready(function() {
+            $('#loginForm').on('submit', function(event) {
+                event.preventDefault(); 
 
-        const formData = {
-            email: $('input[name="email"]').val(),
-            password: $('input[name="password"]').val()
-        };
+                const formData = {
+                    email: $('input[name="email"]').val(),
+                    password: $('input[name="password"]').val()
+                };
 
-        $.ajax({
-            url: 'http://localhost/ActivityManage/public/api/login',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response.access_token) {
-                    localStorage.setItem('access_token', response.access_token); // Store the token
-                    window.location.href = "{{ route('admin.dashboard') }}"; 
-                } else {
-                    $('#response').html('<p style="color:red;">Login failed. No token received.</p>');
-                }
-            },
-            error: function(xhr) {
-                const errorResponse = JSON.parse(xhr.responseText);
-                $('#response').html('<p style="color:red;">' + errorResponse.message + '</p>');
-            }
+                $.ajax({
+                    url: 'http://localhost/ActivityManage/public/api/login',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert("You are an authenticated user !!")
+                        window.location.href = "{{route('admin.dashboard')}}"; 
+                    },
+                    error: function(xhr) {
+                        // Parse the JSON response
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        let errorMessages = '';
+
+                        // Loop through the errors and create a formatted string
+                        $.each(errorResponse.errors, function(field, messages) {
+                            messages.forEach(function(message) {
+                                errorMessages += `<p style="color:red;">${message}</p>`;
+                            });
+                        });
+
+                        // Display the error messages
+                        $('#response').html(errorMessages);
+                    }
+                });
+            });
         });
-    });
-
-    function fetchProtectedData() {
-        $.ajax({
-            url: 'http://localhost/ActivityManage/public/api/some-protected-route',
-            type: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('access_token')
-            },
-            success: function(response) {
-                console.log(response);
-                // Handle the response
-            },
-            error: function(xhr) {
-                // Handle errors, maybe check for token expiration
-                if (xhr.status === 401) {
-                    // Token might be invalid, redirect to login
-                    window.location.href = '/login';
-                }
-            }
-        });
-    }
-});
-
 </script>
 
 </body>
